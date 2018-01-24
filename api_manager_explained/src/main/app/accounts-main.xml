@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    
+    <http:listener-config name="accounts-httpListenerConfig_Accounts" 
+    	host="${http.host}" 
+    	port="${http.port.client.id}" 
+    	doc:name="HTTP Listener Configuration"/>
+    
+    <apikit:config name="accounts-config" raml="accounts.raml" consoleEnabled="true" doc:name="Router" keepRamlBaseUri="false">
+        <apikit:flow-mapping resource="/accounts/{id}" action="get" flow-ref="get-accounts"/>
+    </apikit:config>
+    
+    <flow name="accounts-main">
+        <http:listener config-ref="accounts-httpListenerConfig_Accounts" path="/api/*" doc:name="HTTP">
+            <http:response-builder>
+                <http:header headerName="client_id" value="117add83d1a14c909c3b466055ecb1aa"/>
+                <http:header headerName="client_secret" value="C7d17e25f2f9406e8433B3FEFbF61372"/>
+            </http:response-builder>
+        </http:listener>
+        <apikit:router config-ref="accounts-config" doc:description="For Demo Client ID Enforcement" doc:name="APIkit Router"/>
+        <exception-strategy ref="accounts-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+   
+    <flow name="get-accounts">
+        <set-payload value="{&#xA;&quot;id&quot; : 1234,&#xA;&quot;name&quot; : &quot;Gary Liu&quot;,&#xA;&quot;type&quot; : &quot;checking&quot;&#xA;}" doc:name="Set Payload"/>
+    </flow>
+
+</mule>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration_Simple" host="${http.host}" port="${http.port}" doc:name="HTTP Listener Configuration"/>
+    
+    <apikit:config name="Router" raml="api-manager-explained.raml" consoleEnabled="true" consolePath="console" keepRamlBaseUri="false" doc:name="Router">
+        <apikit:flow-mapping resource="/accounts/{id}" action="get" flow-ref="get-account-by-id-Flow"/>
+    </apikit:config>
+    
+    <flow name="simple-security-main-Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration_Simple" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="Router" doc:name="APIkit Router"/>
+    </flow>
+</mule>

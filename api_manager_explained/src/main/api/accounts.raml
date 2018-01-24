@@ -1,0 +1,38 @@
+#%RAML 1.0
+title: Account Api
+version: 1.0.1
+protocols: [ HTTP, HTTPS ]
+baseUri: https://mocksvc.mulesoft.com/mocks/f4bf83c6-1f8d-4063-b9e8-fd093dbfe3b3/{version} # baseUri: http://esb.ggl-consulting.com/{version}
+mediaType: application/json
+
+traits: 
+  client-id-required:
+      queryParameters:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+types: 
+  Account:
+    properties: 
+      id: integer
+      type: string
+      name: string
+  Error:
+    properties: 
+      code: integer
+      errorMessage: string
+
+/accounts:
+  /{id}:
+    get:
+      is: [client-id-required]
+      description: get an account information by id
+      responses: 
+        200:
+          body: 
+            application/json:
+              type: Account
+              example: { "id": 1234, "name": "Gary Liu", "type": "checking" }
+              
+
